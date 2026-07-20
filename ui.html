@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BetterLife</title>
+<style>
+  :root{
+    --bg:#0f1420; --bg2:#131a2a; --card:rgba(255,255,255,.045);
+    --card-hi:rgba(255,255,255,.08); --line:rgba(255,255,255,.09);
+    --txt:#e8edf7; --muted:#9aa6bd; --muted2:#6b7690;
+    --acc:#34d399; --acc2:#10b981; --violet:#a78bfa; --amber:#fbbf24; --red:#f87171;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    color:var(--txt); background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(52,211,153,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(167,139,250,.10), transparent 55%),
+      linear-gradient(160deg,var(--bg),var(--bg2));
+    min-height:100vh; overflow-x:hidden;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:22px 26px 60px}
+  /* header */
+  header{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+  .logo{font-size:26px;font-weight:800;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
+  .logo .dot{background:linear-gradient(135deg,var(--acc),var(--acc2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .chip{margin-left:auto;display:flex;align-items:center;gap:12px;background:var(--card);
+    border:1px solid var(--line);border-radius:14px;padding:10px 16px;box-shadow:var(--shadow)}
+  .chip .big{font-size:22px;font-weight:800}
+  .chip .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  /* nav */
+  nav{display:flex;gap:8px;background:var(--card);border:1px solid var(--line);
+    border-radius:16px;padding:6px;margin-bottom:22px;box-shadow:var(--shadow);flex-wrap:wrap}
+  nav button{flex:1;min-width:120px;border:0;background:transparent;color:var(--muted);
+    font-size:14px;font-weight:600;padding:11px 10px;border-radius:11px;cursor:pointer;
+    transition:.18s;display:flex;align-items:center;justify-content:center;gap:7px}
+  nav button:hover{color:var(--txt);background:var(--card-hi)}
+  nav button.active{color:#04160f;background:linear-gradient(135deg,var(--acc),var(--acc2));
+    box-shadow:0 6px 16px rgba(16,185,129,.35)}
+  /* views */
+  .view{display:none;animation:fade .25s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow);margin-bottom:18px}
+  h2.section{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;
+    margin-bottom:14px;font-weight:700}
+  .muted{color:var(--muted)} .small{font-size:13px}
+  /* today */
+  .kcal-big{font-size:52px;font-weight:800;line-height:1}
+  .kcal-sub{color:var(--muted);margin-top:6px}
+  .bar{height:12px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:16px}
+  .bar > i{display:block;height:100%;border-radius:8px;
+    background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .4s}
+  .bar.over > i{background:linear-gradient(90deg,var(--amber),var(--red))}
+  .pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .pill{background:var(--card-hi);border:1px solid var(--line);border-radius:12px;
+    padding:9px 14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .log-row{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--line)}
+  .log-row:last-child{border-bottom:0}
+  .log-row .nm{font-weight:600} .log-row .am{color:var(--muted);font-size:13px}
+  .log-row .kc{margin-left:auto;font-weight:700}
+  .x{border:0;background:rgba(248,113,113,.12);color:var(--red);border-radius:9px;
+    width:30px;height:30px;cursor:pointer;font-size:15px;transition:.15s}
+  .x:hover{background:rgba(248,113,113,.25)}
+  /* buttons */
+  .btn{border:0;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;
+    transition:.16s;display:inline-flex;align-items:center;gap:8px}
+  .btn.primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#04160f;
+    box-shadow:0 6px 16px rgba(16,185,129,.3)}
+  .btn.primary:hover{filter:brightness(1.07);transform:translateY(-1px)}
+  .btn.ghost{background:var(--card-hi);color:var(--txt);border:1px solid var(--line)}
+  .btn.ghost:hover{background:rgba(255,255,255,.12)}
+  input,select{font-family:inherit;font-size:14px;color:var(--txt);background:rgba(255,255,255,.06);
+    border:1px solid var(--line);border-radius:11px;padding:11px 13px;outline:none;transition:.15s}
+  input:focus,select:focus{border-color:var(--acc);background:rgba(255,255,255,.09)}
+  label.fld{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+  .radio{display:flex;gap:8px}
+  .radio label{display:flex;align-items:center;gap:6px;background:var(--card-hi);border:1px solid var(--line);
+    border-radius:11px;padding:10px 13px;cursor:pointer;font-size:13px;font-weight:600}
+  .radio input{display:none}
+  .radio label.on{border-color:var(--acc);background:rgba(52,211,153,.14);color:var(--acc)}
+  /* fridge */
+  .fridge-top{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .search{flex:1;min-width:200px}
+  .catbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .catbtn{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:11px;
+    padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;display:flex;gap:6px}
+  .catbtn:hover{color:var(--txt)} .catbtn.on{color:#04160f;background:linear-gradient(135deg,var(--acc),var(--acc2))}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
+  .food{position:relative;background:var(--card);border:1px solid var(--line);border-radius:15px;
+    padding:15px 12px;text-align:center;cursor:pointer;transition:.15s;user-select:none}
+  .food:hover{transform:translateY(-2px);border-color:var(--card-hi);background:var(--card-hi)}
+  .food.on{border-color:var(--acc);background:rgba(52,211,153,.12);box-shadow:0 0 0 1px var(--acc) inset}
+  .food .emo{font-size:38px;line-height:1;display:block;margin-bottom:8px}
+  .food .fn{font-weight:600;font-size:13px} .food .fk{color:var(--muted);font-size:12px;margin-top:3px}
+  .food .tick{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;
+    background:linear-gradient(135deg,var(--acc),var(--acc2));color:#04160f;font-size:13px;font-weight:900;
+    display:none;align-items:center;justify-content:center}
+  .food.on .tick{display:flex}
+  .food .frozen{position:absolute;top:8px;left:8px;font-size:13px;opacity:.8}
+  .food .qty{display:none;margin-top:10px;gap:5px;align-items:center;justify-content:center}
+  .food.on .qty{display:flex}
+  .food .qty input{width:52px;padding:6px 6px;text-align:center;font-weight:700;font-size:13px}
+  .food .qty select{padding:6px 4px;font-size:12px}
+  .food .qty .rm{border:0;background:rgba(248,113,113,.14);color:var(--red);border-radius:8px;
+    width:28px;height:28px;cursor:pointer;font-size:13px}
+  /* workout editor */
+  .wk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:6px 0 14px}
+  .wk-cell{background:var(--card-hi);border:1px solid var(--line);border-radius:12px;padding:10px}
+  .wk-cell.conflict{border-color:var(--red);box-shadow:0 0 0 1px var(--red) inset}
+  .wk-cell .d{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px}
+  .wk-cell select{width:100%;padding:8px 6px;font-weight:600}
+  .wk-cardio{display:flex;align-items:center;gap:8px;margin:4px 0 2px}
+  .wk-badge{display:block;font-size:12px;color:var(--acc);font-weight:700;margin-top:3px}
+  .wk-rest{color:var(--muted)}
+  /* plan */
+  .capgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:6px 0 16px}
+  .capcell{background:var(--card-hi);border:1px solid var(--line);border-radius:11px;padding:8px;text-align:center}
+  .capcell .d{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}
+  .capcell input{width:100%;text-align:center;padding:7px 4px;font-weight:700}
+  .tablewrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
+  table{border-collapse:collapse;width:100%;min-width:820px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:rgba(255,255,255,.04);font-size:12px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.5px;position:sticky;left:0}
+  td.day{font-weight:700;white-space:nowrap}
+  .mi{display:block;font-size:13px;margin-bottom:2px}
+  .mk{color:var(--muted);font-size:12px;margin-top:4px;font-weight:600}
+  .tot{font-weight:800;font-size:15px} .tot .cap{color:var(--muted);font-weight:600;font-size:12px}
+  .ok{color:var(--acc)} .warn{color:var(--amber)} .bad{color:var(--red)}
+  .weeksum{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap}
+  .empty{text-align:center;padding:40px 20px;color:var(--muted)}
+  .empty .e{font-size:44px;display:block;margin-bottom:12px}
+  .result{font-size:20px;font-weight:800;margin-top:8px}
+  .hint{color:var(--muted);font-size:13px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">🥗 <span class="dot">BetterLife</span></div>
+    <div class="chip">
+      <div><div class="lbl">Rămase azi</div><div class="big" id="hdrRem">—</div></div>
+      <div style="font-size:26px">🔥</div>
+    </div>
+  </header>
+
+  <nav id="nav">
+    <button data-tab="today" class="active">📊 Azi</button>
+    <button data-tab="fridge">🧊 Frigider</button>
+    <button data-tab="plan">🗓️ Plan 7 zile</button>
+    <button data-tab="calc">🧮 Calculator</button>
+    <button data-tab="settings">⚙️ Setări</button>
+  </nav>
+
+  <!-- ===================== AZI ===================== -->
+  <section class="view active" id="view-today">
+    <div class="card">
+      <h2 class="section">Bugetul zilei</h2>
+      <div class="kcal-big" id="tRem">—</div>
+      <div class="kcal-sub" id="tSub">—</div>
+      <div class="bar" id="tBarWrap"><i id="tBar" style="width:0%"></i></div>
+      <div class="pills" id="tPills"></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;margin-bottom:6px">
+        <h2 class="section" style="margin:0">Ce ai mâncat azi</h2>
+        <button class="btn ghost" id="btnClearDay" style="margin-left:auto;padding:8px 12px">🗑️ Golește ziua</button>
+      </div>
+      <div id="tLog"></div>
+    </div>
+  </section>
+
+  <!-- ===================== FRIGIDER ===================== -->
+  <section class="view" id="view-fridge">
+    <div class="card">
+      <h2 class="section">Ce ai în frigider</h2>
+      <div class="fridge-top">
+        <input class="search" id="fSearch" placeholder="🔎 Caută aliment...">
+        <span class="pill" id="fCount">0 în frigider</span>
+        <button class="btn ghost" id="btnClearPantry" style="padding:9px 13px">Golește frigiderul</button>
+      </div>
+      <div class="catbar" id="fCats"></div>
+      <div class="grid" id="fGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===================== PLAN 7 ZILE ===================== -->
+  <section class="view" id="view-plan">
+    <div class="card">
+      <h2 class="section">Limită de kcal pe fiecare zi</h2>
+      <div class="capgrid" id="capGrid"></div>
+      <div class="row" style="align-items:center">
+        <button class="btn primary" id="btnGen">🍽️ Generează planul</button>
+        <button class="btn ghost" id="btnRegen">🔀 Altă variantă</button>
+        <button class="btn ghost" id="btnPlanSync">🔄 Trimite pe GitHub</button>
+        <span class="pill" id="weekBudget">Buget/săptămână: —</span>
+      </div>
+      <div class="hint">Planul folosește doar alimentele din frigider și nu depășește limita fiecărei zile.</div>
+      <div class="hint" id="planSyncMsg" style="margin-top:4px"></div>
+    </div>
+    <div class="card">
+      <h2 class="section">🏋️ Antrenament pe zile</h2>
+      <div class="wk-cardio">
+        <span>🏃 Cardio zilnic (bandă):</span>
+        <input id="wkCardio" style="flex:1;min-width:180px" placeholder="ex: Bandă 30 min (~300 kcal)">
+      </div>
+      <div class="hint" style="margin-bottom:8px">Cardio la bandă se face în <b>fiecare zi</b>. Grupele musculare se rotesc — evită două zile la rând aceeași grupă.</div>
+      <div class="wk-grid" id="wkGrid"></div>
+      <div class="row" style="align-items:center">
+        <button class="btn ghost" id="btnWkAuto">🔀 Auto-aranjează (fără zile consecutive)</button>
+        <span class="pill" id="wkWarn" style="display:none"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section">Recomandarea pe 7 zile</h2>
+      <div id="planBody"><div class="empty"><span class="e">🗓️</span>Apasă „Generează planul".</div></div>
+    </div>
+  </section>
+
+  <!-- ===================== CALCULATOR ===================== -->
+  <section class="view" id="view-calc">
+    <div class="card">
+      <h2 class="section">Calculator de calorii</h2>
+      <div class="hint" id="cBudget" style="margin-bottom:14px">—</div>
+      <div class="row">
+        <div style="flex:2;min-width:180px">
+          <label class="fld">Nume produs</label>
+          <input id="cName" list="foodList" placeholder="ex: Piept de pui" style="width:100%">
+          <datalist id="foodList"></datalist>
+        </div>
+        <div style="flex:1;min-width:120px">
+          <label class="fld">Calorii produs</label>
+          <input id="cKcal" placeholder="ex: 165" style="width:100%">
+        </div>
+        <div class="radio" id="cUnit">
+          <label class="on"><input type="radio" name="unit" value="100g" checked>la 100 g</label>
+          <label><input type="radio" name="unit" value="portion">la porție/bucată</label>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn primary" id="btnHowMuch">🍴 Cât pot mânca?</button>
+        <div class="result ok" id="cHow"></div>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+      <div class="row">
+        <div style="flex:1;min-width:140px">
+          <label class="fld" id="cQtyLbl">Vreau să mănânc (g)</label>
+          <input id="cQty" placeholder="ex: 150" style="width:100%">
+        </div>
+        <button class="btn ghost" id="btnCalcQty">Calculează caloriile</button>
+      </div>
+      <div class="result" id="cResult" style="font-size:16px"></div>
+      <button class="btn primary" id="btnAdd" style="margin-top:12px;display:none">＋ Adaugă în ziua de azi</button>
+    </div>
+  </section>
+
+  <!-- ===================== SETĂRI ===================== -->
+  <section class="view" id="view-settings">
+    <div class="card">
+      <h2 class="section">Limita zilnică implicită</h2>
+      <div class="row">
+        <div><label class="fld">Kcal maxim / zi</label><input id="sDaily" style="width:160px"></div>
+        <button class="btn primary" id="btnSaveDaily">Salvează</button>
+      </div>
+      <div class="hint">Poți seta limite diferite pentru fiecare zi în tab-ul „Plan 7 zile".</div>
+    </div>
+    <div class="card">
+      <h2 class="section">Program & config</h2>
+      <p class="muted small" style="margin-bottom:12px">Orele meselor, gustările și antrenamentul se editează în <b>config.yaml</b>.</p>
+      <button class="btn ghost" id="btnOpenCfg">📝 Deschide config.yaml</button>
+    </div>
+    <div class="card">
+      <h2 class="section">🔔 Notificări pe telefon (GitHub)</h2>
+      <p class="muted small" style="margin-bottom:12px">După ce schimbi programul sau generezi săptămâna, trimite pe GitHub — reminderele din cloud vor folosi ultimele setări și rămân active pe telefon.</p>
+      <div id="ghStatus" class="pill">Verific legătura...</div>
+      <div id="ghConnected" style="display:none;margin-top:14px">
+        <button class="btn primary" id="btnGhSync">🔄 Trimite pe GitHub</button>
+      </div>
+      <div id="ghDisconnected" style="display:none;margin-top:14px">
+        <label class="fld">Adresa repo-ului tău GitHub (.git)</label>
+        <div class="row">
+          <input id="ghUrl" placeholder="https://github.com/utilizator/betterlife.git" style="flex:1;min-width:260px">
+          <button class="btn primary" id="btnGhConnect">🔗 Conectează</button>
+        </div>
+        <div class="hint">Creează un repo gol pe github.com, apoi lipește adresa aici. Prima conectare poate deschide browserul pentru login GitHub.</div>
+      </div>
+      <div id="ghNogit" class="hint" style="display:none;margin-top:12px">Git nu e instalat. Instalează „Git for Windows" de pe git-scm.com și redeschide aplicația.</div>
+      <div id="ghMsg" class="result" style="font-size:14px;margin-top:12px"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+let S = null;                 // starea completă (get_state)
+let filterCat = "all", filterText = "";
+let pending = null;           // {name, amount, kcal} pregătit pentru „Adaugă"
+
+const $ = s => document.querySelector(s);
+const api = () => window.pywebview.api;
+const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function unit(){ return document.querySelector('#cUnit input:checked').value; }
+
+/* ---------- boot ---------- */
+window.addEventListener('pywebviewready', boot);
+async function boot(){
+  S = await api().get_state();
+  buildNav(); renderToday(); buildFridge(); buildCaps(); buildWorkout(); buildFoodList(); renderCalc(); renderSettings();
+  if (S.plan) renderPlan(S.plan);
+  loadGithub();
+}
+
+/* ---------- nav ---------- */
+function buildNav(){
+  document.querySelectorAll('#nav button').forEach(b=>{
+    b.onclick = ()=>{
+      document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+      $('#view-'+b.dataset.tab).classList.add('active');
+    };
+  });
+}
+
+/* ---------- AZI ---------- */
+function applyToday(t){
+  S.today = t;
+  const over = t.remaining < 0;
+  $('#hdrRem').textContent = t.remaining + ' kcal';
+  $('#hdrRem').style.color = over ? 'var(--red)' : 'var(--acc)';
+  $('#tRem').textContent = t.remaining + ' kcal';
+  $('#tRem').style.color = over ? 'var(--red)' : 'var(--txt)';
+  $('#tSub').textContent = `Limită ${t.cap} kcal  ·  mâncat ${t.eaten} kcal  ·  ${t.weekday}`;
+  const pct = Math.min(100, t.cap ? Math.round(t.eaten/t.cap*100) : 0);
+  $('#tBar').style.width = pct + '%';
+  $('#tBarWrap').classList.toggle('over', over);
+  $('#tPills').innerHTML =
+    `<div class="pill">🏋️ Azi: ${esc(t.muscle)}</div>`+
+    `<div class="pill">🍽️ Mese azi: ${t.entries.length}</div>`+
+    `<div class="pill">📅 ${esc(t.date)}</div>`;
+  const log = $('#tLog');
+  if(!t.entries.length){ log.innerHTML = '<div class="muted small" style="padding:8px 0">Încă n-ai adăugat nimic. Folosește Calculatorul.</div>'; }
+  else log.innerHTML = t.entries.map((e,i)=>
+    `<div class="log-row"><div><div class="nm">${esc(e.name)}</div><div class="am">${esc(e.amount||'')}</div></div>`+
+    `<div class="kc">${e.kcal} kcal</div><button class="x" data-del="${i}">✕</button></div>`).join('');
+  log.querySelectorAll('[data-del]').forEach(b=> b.onclick = async ()=> applyToday(await api().remove_entry(+b.dataset.del)));
+  if($('#cBudget')) renderCalcBudget();
+}
+function renderToday(){ applyToday(S.today); }
+$('#btnClearDay').onclick = async ()=>{ applyToday(await api().clear_day()); };
+
+/* ---------- FRIGIDER (cu cantități) ---------- */
+function pantryCount(){ return Object.keys(S.pantry||{}).length; }
+function buildFridge(){
+  const cats = $('#fCats');
+  cats.innerHTML = `<button class="catbtn on" data-cat="all">Toate</button>` +
+    S.categories.map(c=>`<button class="catbtn" data-cat="${c.key}">${c.emoji} ${esc(c.label)}</button>`).join('');
+  cats.querySelectorAll('.catbtn').forEach(b=> b.onclick = ()=>{
+    filterCat=b.dataset.cat; cats.querySelectorAll('.catbtn').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); renderFridge();
+  });
+  $('#fSearch').oninput = e=>{ filterText = e.target.value.toLowerCase().trim(); renderFridge(); };
+  $('#btnClearPantry').onclick = async ()=>{ const r=await api().clear_pantry(); S.pantry=r.pantry; renderFridge(); };
+  renderFridge();
+}
+function foodCard(f){
+  const p = S.pantry[f.key], on = !!p;
+  const units = ['g','kg']; if(f.piece_g>0) units.push('buc');
+  const q = p ? p.q : (f.piece_g>0?1:200);
+  const u = p ? p.u : (f.piece_g>0?'buc':'g');
+  const opts = units.map(x=>`<option value="${x}" ${x===u?'selected':''}>${x}</option>`).join('');
+  const info = (on && p.u!=='g') ? `<div class="fk">≈ ${p.g} g</div>` : `<div class="fk">${f.kcal} kcal/100g</div>`;
+  return `<div class="food ${on?'on':''}" data-food="${f.key}">`+
+    `<span class="tick">✓</span>${f.frozen?'<span class="frozen">🧊</span>':''}`+
+    `<span class="emo">${f.emoji}</span><div class="fn">${esc(f.name)}</div>`+ info +
+    `<div class="qty"><input class="qtyval" type="number" min="0" step="1" value="${q}">`+
+    `<select class="qtyunit">${opts}</select>`+
+    `<button class="rm" title="Scoate din frigider">🗑️</button></div></div>`;
+}
+function renderFridge(){
+  $('#fCount').textContent = pantryCount() + ' în frigider';
+  const items = S.foods.filter(f=>
+    (filterCat==='all'||f.cat===filterCat) &&
+    (!filterText || f.name.toLowerCase().includes(filterText)) );
+  $('#fGrid').innerHTML = items.map(foodCard).join('');
+  $('#fGrid').querySelectorAll('.food').forEach(el=>{
+    const key = el.dataset.food;
+    el.addEventListener('click', async (e)=>{
+      if(e.target.closest('.qty')) return;                 // clic pe controale = nu comuta
+      if(S.pantry[key]){ const r=await api().remove_pantry(key); S.pantry=r.pantry; }
+      else { const f=S.foods.find(x=>x.key===key); const u=f.piece_g>0?'buc':'g'; const q=f.piece_g>0?1:200;
+             const r=await api().set_pantry_amount(key,q,u); S.pantry=r.pantry; }
+      renderFridge();
+    });
+    const val=el.querySelector('.qtyval'), unit=el.querySelector('.qtyunit'), rm=el.querySelector('.rm');
+    const save=async()=>{ const r=await api().set_pantry_amount(key, val.value, unit.value); S.pantry=r.pantry; renderFridge(); };
+    if(val) val.addEventListener('change', save);
+    if(unit) unit.addEventListener('change', save);
+    if(rm) rm.addEventListener('click', async(e)=>{ e.stopPropagation(); const r=await api().remove_pantry(key); S.pantry=r.pantry; renderFridge(); });
+  });
+}
+
+/* ---------- ANTRENAMENT ---------- */
+function buildWorkout(){
+  $('#wkCardio').value = (S.workout && S.workout.cardio) || '';
+  $('#wkCardio').addEventListener('change', async ()=>{
+    const r = await api().set_cardio($('#wkCardio').value); S.workout=r.workout; renderWorkout(r.conflicts);
+  });
+  $('#btnWkAuto').onclick = async ()=>{
+    const r = await api().auto_arrange_workout(); S.workout=r.workout; renderWorkout(r.conflicts);
+  };
+  renderWorkout(S.workout_conflicts||[]);
+}
+function renderWorkout(conflicts){
+  conflicts = conflicts||[];
+  const sched = (S.workout&&S.workout.schedule)||{}, groups = S.muscle_groups||[];
+  $('#wkGrid').innerHTML = S.weekday_order.map(wd=>{
+    const cur = sched[wd]||'Repaus';
+    const opts = groups.map(g=>`<option value="${esc(g)}" ${g===cur?'selected':''}>${esc(g)}</option>`).join('');
+    return `<div class="wk-cell ${conflicts.includes(wd)?'conflict':''}"><div class="d">${esc(S.weekday_labels[wd])}</div>`+
+      `<select data-wd="${wd}">${opts}</select></div>`;
+  }).join('');
+  $('#wkGrid').querySelectorAll('select').forEach(sel=> sel.onchange = async ()=>{
+    const r = await api().set_workout_day(sel.dataset.wd, sel.value); S.workout=r.workout; renderWorkout(r.conflicts);
+  });
+  const warn = $('#wkWarn'); warn.style.display='inline-flex'; warn.className='pill';
+  warn.innerHTML = conflicts.length
+    ? '⚠️ <span class="warn">Zile consecutive cu aceeași grupă</span>'
+    : '✅ Rotație bună';
+}
+
+/* ---------- PLAN ---------- */
+function buildCaps(){
+  const g = $('#capGrid');
+  g.innerHTML = S.weekday_order.map(wd=>{
+    const lbl = S.weekday_labels[wd];
+    return `<div class="capcell"><div class="d">${esc(lbl.slice(0,3))}</div>`+
+      `<input data-wd="${wd}" value="${S.settings.day_caps[wd]}"></div>`;
+  }).join('');
+  g.querySelectorAll('input').forEach(inp=> inp.onchange = async ()=>{
+    const r = await api().set_day_cap(inp.dataset.wd, inp.value);
+    S.settings = r.settings; $('#weekBudget').textContent = 'Buget/săptămână: '+r.weekly_budget+' kcal';
+    applyToday(r.today);
+  });
+  $('#weekBudget').textContent = 'Buget/săptămână: '+S.weekly_budget+' kcal';
+  $('#btnGen').onclick = doGen; $('#btnRegen').onclick = doGen;
+}
+async function doGen(){
+  $('#planBody').innerHTML = '<div class="empty"><span class="e">⏳</span>Generez planul...</div>';
+  const plan = await api().generate_plan(); S.plan = plan; renderPlan(plan);
+}
+function cls(total, cap){ if(total>cap) return 'bad'; if(total>cap*0.92) return 'warn'; return 'ok'; }
+function renderPlan(plan){
+  if(!plan.pantry_count){
+    $('#planBody').innerHTML = '<div class="empty"><span class="e">🧊</span>Frigiderul e gol. '+
+      'Mergi la <b>Frigider</b> și bifează ce ai, apoi generează planul.</div>'; return;
+  }
+  const mealKeys = plan.days[0].meals;
+  let head = '<tr><th>Zi</th><th>🏋️ Antrenament</th>' + mealKeys.map(m=>`<th>${esc(m.title)}<br><span class="muted">${esc(m.time||'')}</span></th>`).join('') + '<th>Total</th></tr>';
+  let rows = plan.days.map(d=>{
+    const w = d.workout||{};
+    const muscle = w.rest ? `<span class="wk-rest">😴 ${esc(w.muscle||'Repaus')}</span>` : `<b>${esc(w.muscle||'')}</b>`;
+    const cardio = w.cardio ? `<span class="wk-badge">${esc(w.cardio)}</span>` : '';
+    const wdet = (w.details && !w.rest) ? `<div class="muted small" style="margin-top:3px">${esc(w.details)}</div>` : '';
+    const wcell = `<td>${muscle}${cardio}${wdet}</td>`;
+    let cells = d.meals.map(m=>{
+      const items = m.items.length ? m.items.map(it=>`<span class="mi">${it.emoji} ${esc(it.name)} · ${it.grams}g</span>`).join('')
+        : '<span class="muted small">—</span>';
+      return `<td>${items}<div class="mk">${m.kcal} kcal</div></td>`;
+    }).join('');
+    return `<tr><td class="day">${esc(d.label)}</td>${wcell}${cells}`+
+      `<td><div class="tot ${cls(d.total,d.cap)}">${d.total}</div><div class="cap">/ ${d.cap} kcal</div></td></tr>`;
+  }).join('');
+  const wc = cls(plan.weekly_total, plan.weekly_budget);
+  $('#planBody').innerHTML =
+    `<div class="tablewrap"><table>${head}${rows}</table></div>`+
+    `<div class="weeksum"><span class="pill">📦 Total săptămână: <b class="${wc}">${plan.weekly_total}</b> / ${plan.weekly_budget} kcal</span>`+
+    `<span class="muted small">Verde = în limită · galben = aproape · roșu = peste.</span></div>`;
+}
+
+/* ---------- CALCULATOR ---------- */
+function buildFoodList(){
+  $('#foodList').innerHTML = S.foods.map(f=>`<option value="${esc(f.name)}" data-kcal="${f.kcal}">${f.emoji} ${f.kcal} kcal/100g</option>`).join('');
+  $('#cName').oninput = ()=>{
+    const f = S.foods.find(x=>x.name.toLowerCase()===$('#cName').value.toLowerCase());
+    if(f){ $('#cKcal').value = f.kcal; setUnit('100g'); }
+  };
+  document.querySelectorAll('#cUnit label').forEach(l=> l.onclick = ()=> setTimeout(syncUnit,0));
+}
+function setUnit(v){ document.querySelector(`#cUnit input[value="${v}"]`).checked = true; syncUnit(); }
+function syncUnit(){
+  document.querySelectorAll('#cUnit label').forEach(l=> l.classList.toggle('on', l.querySelector('input').checked));
+  $('#cQtyLbl').textContent = unit()==='portion' ? 'Vreau să mănânc (porții)' : 'Vreau să mănânc (g)';
+}
+function renderCalc(){ renderCalcBudget(); syncUnit(); }
+function renderCalcBudget(){ $('#cBudget').textContent = `Buget rămas azi: ${S.today.remaining} kcal (din ${S.today.cap} kcal).`; }
+function num(v){ const n=parseFloat(String(v).replace(',','.')); return isNaN(n)?null:n; }
+
+$('#btnHowMuch').onclick = ()=>{
+  const k = num($('#cKcal').value); const rem = S.today.remaining;
+  if(k===null||k<=0){ $('#cHow').textContent='Scrie caloriile produsului.'; $('#cHow').className='result bad'; return; }
+  if(rem<=0){ $('#cHow').textContent='Ai atins limita zilnică (0 kcal rămase).'; $('#cHow').className='result bad'; return; }
+  $('#cHow').className='result ok';
+  if(unit()==='portion') $('#cHow').textContent = `Poți mânca ~${(rem/k).toFixed(1)} porții (${rem} kcal rămase).`;
+  else $('#cHow').textContent = `Poți mânca ~${Math.floor(rem/k*100)} g (${rem} kcal rămase).`;
+};
+$('#btnCalcQty').onclick = ()=>{
+  const k = num($('#cKcal').value), q = num($('#cQty').value), rem = S.today.remaining;
+  if(k===null||k<=0||q===null||q<=0){ $('#cResult').textContent='Completează caloriile și cantitatea.'; $('#cResult').className='result bad'; return; }
+  const per = unit()==='portion';
+  const kcal = per ? q*k : q*k/100;
+  const after = rem - kcal;
+  const uu = per?'porții':'g';
+  $('#cResult').className = 'result ' + (after>=0?'ok':'bad');
+  $('#cResult').textContent = `${q} ${uu} = ${Math.round(kcal)} kcal.  ` +
+    (after>=0 ? `Se încadrează ✅ (rămân ${Math.round(after)} kcal).` : `Depășește cu ${Math.round(-after)} kcal ❌`);
+  pending = { name: ($('#cName').value.trim()||'Produs'), amount: `${q} ${uu}`, kcal: Math.round(kcal) };
+  $('#btnAdd').style.display = 'inline-flex';
+};
+$('#btnAdd').onclick = async ()=>{
+  if(!pending) return;
+  const t = await api().add_entry(pending.name, pending.amount, pending.kcal);
+  applyToday(t);
+  $('#cResult').textContent = `Adăugat: ${pending.name} (${pending.amount}, ${pending.kcal} kcal).`;
+  $('#cResult').className='result ok';
+  $('#btnAdd').style.display='none'; pending=null; $('#cName').value=''; $('#cQty').value='';
+};
+
+/* ---------- SETĂRI ---------- */
+function renderSettings(){ $('#sDaily').value = S.settings.daily_cap; }
+$('#btnSaveDaily').onclick = async ()=>{
+  const r = await api().set_daily_cap($('#sDaily').value);
+  S.settings = r.settings; S.weekly_budget = r.weekly_budget;
+  buildCaps(); applyToday(r.today);
+  $('#btnSaveDaily').textContent = 'Salvat ✓'; setTimeout(()=> $('#btnSaveDaily').textContent='Salvează', 1200);
+};
+$('#btnOpenCfg').onclick = ()=> api().open_config();
+
+/* ---------- GITHUB (notificări pe telefon) ---------- */
+let ghState = null;
+async function loadGithub(){
+  ghState = await api().github_status();
+  const s=ghState, status=$('#ghStatus');
+  $('#ghConnected').style.display='none'; $('#ghDisconnected').style.display='none'; $('#ghNogit').style.display='none';
+  if(!s.installed){ status.textContent='⚠️ Git nu e instalat'; $('#ghNogit').style.display='block'; return; }
+  if(s.is_repo && s.has_remote){
+    status.innerHTML = '✅ Conectat: <b>'+esc(s.remote_url)+'</b>' + (s.dirty?' · <span class="warn">ai modificări netrimise</span>':' · la zi');
+    $('#ghConnected').style.display='block';
+  } else {
+    status.textContent = '⚠️ Neconectat la GitHub';
+    $('#ghDisconnected').style.display='block';
+  }
+}
+function ghMsg(r){ const m=$('#ghMsg'); m.textContent=r.msg; m.className='result '+(r.ok?'ok':'bad'); m.style.fontSize='14px'; }
+function busy(sel,t){ const b=$(sel); b.textContent=t; b.disabled=true; }
+function idle(sel,t){ const b=$(sel); b.textContent=t; b.disabled=false; }
+
+$('#btnGhSync').onclick = async ()=>{
+  busy('#btnGhSync','⏳ Trimit...');
+  ghMsg(await api().github_sync());
+  await loadGithub(); idle('#btnGhSync','🔄 Trimite pe GitHub');
+};
+$('#btnGhConnect').onclick = async ()=>{
+  busy('#btnGhConnect','⏳ Conectez...');
+  ghMsg(await api().github_setup($('#ghUrl').value));
+  await loadGithub(); idle('#btnGhConnect','🔗 Conectează');
+};
+$('#btnPlanSync').onclick = async ()=>{
+  const el=$('#planSyncMsg'); el.textContent='⏳ Trimit pe GitHub...'; el.className='hint';
+  const r = await api().github_sync();
+  el.textContent = r.msg; el.className = 'hint ' + (r.ok?'ok':'bad');
+  loadGithub();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build .exe (PyInstaller)
+build/
+dist/
+*.spec
+*.exe
+
+# Date personale locale (jurnal, frigider, plan, limite)
+food_log.json
+pantry.json
+plan.json
+settings.json
+
+# Preview iconiță (icon.ico rămâne, e nevoie la build)
+icon_preview.png
+
+# Secrete locale
+local_secrets.env

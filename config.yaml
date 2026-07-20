@@ -1,0 +1,90 @@
+# ============================================================
+#  BetterLife — configul TĂU
+#  Editează liber orele, caloriile, gustările și antrenamentul.
+#  Orele sunt LOCALE (Europe/Bucharest), format 24h "HH:MM".
+#  Scriptul calculează singur ora corectă (se adaptează automat
+#  la ora de vară / iarnă), nu trebuie să faci tu nimic la DST.
+# ============================================================
+
+timezone: Europe/Bucharest
+
+ntfy:
+  # Topicul tău = "canalul" tău secret de notificări.
+  # SCHIMBĂ-l cu ceva unic, doar al tău (litere, cifre, liniuțe).
+  # Oricine știe topicul îți poate trimite notificări, deci ține-l privat.
+  # În cloud îl poți pune ca secret GitHub "NTFY_TOPIC" (vezi README).
+  topic: betterlife-vd-schimba-ma-7f3a9c
+  server: https://ntfy.sh
+
+# Limita TOTALĂ de calorii pe zi (nu o depăși).
+daily_kcal_cap: 1800
+
+# Fereastra de toleranță: dacă un reminder "a trecut", se trimite
+# totuși dacă nu au trecut mai mult de atâtea minute (evită dublurile
+# și mesajele vechi). 45 min e sigur cu verificarea la fiecare 15 min.
+grace_minutes: 45
+
+# ------------------------------------------------------------
+#  MESE ȘI GUSTĂRI  — adaugă/șterge/mută cum vrei
+#  {kcal_cap} = limita mesei, {options} = variantele, {daily_kcal_cap} = total zi
+# ------------------------------------------------------------
+meals:
+  - key: breakfast
+    time: "08:00"
+    title: "🍳 Mic dejun"
+    kcal_cap: 400
+    tags: fork_and_knife,sunrise
+    priority: 4
+    message: "E timpul de mic dejun. Nu depăși {kcal_cap} kcal. Mănâncă acum — apoi pauză, nu ciuguli până la gustare."
+
+  - key: snack_am
+    time: "11:00"
+    title: "🍎 Gustare"
+    kcal_cap: 150
+    options: "un măr, un iaurt slab, un fruct"
+    tags: apple
+    priority: 3
+    message: "Gustare ușoară înainte de prânz: {options}. Ține-o slab calorică (~{kcal_cap} kcal)."
+
+  - key: lunch
+    time: "13:30"
+    title: "🍽️ Prânz"
+    kcal_cap: 600
+    tags: plate_with_cutlery
+    priority: 4
+    message: "E prânzul (13:30). Masa principală — max {kcal_cap} kcal. Mănâncă doar acum."
+
+  - key: snack_pm
+    time: "19:00"
+    title: "🥤 Gustare"
+    kcal_cap: 150
+    options: "un fruct, iaurt, câteva nuci"
+    tags: cup_with_straw
+    priority: 3
+    message: "Gustare: {options} (~{kcal_cap} kcal). Pleci de la muncă — acasă urmează duș + antrenament."
+
+  - key: dinner
+    time: "20:45"
+    title: "🍲 Cină"
+    kcal_cap: 500
+    tags: stew
+    priority: 4
+    message: "Cina, după antrenament. Max {kcal_cap} kcal. Atenție la totalul zilei: {daily_kcal_cap} kcal."
+
+# ------------------------------------------------------------
+#  ANTRENAMENT
+#  Programul de antrenament (grupe pe zile, cardio, serii) e acum în
+#  fișierul workout.json și se editează cel mai ușor din aplicație,
+#  în tab-ul „Plan 7 zile". Cardio (banda) e inclus în fiecare zi.
+# ------------------------------------------------------------
+
+# ------------------------------------------------------------
+#  ÎNCHIDEREA ZILEI  — după asta ești liber pentru proiectele tale
+#  {tomorrow_muscle} = grupa de mâine
+# ------------------------------------------------------------
+day_close:
+  time: "21:30"
+  title: "✅ Ziua închisă"
+  tags: white_check_mark
+  priority: 3
+  message: "Gata cu mâncarea pe azi. Treci pe proiectele tale AI. Mâine la antrenament: {tomorrow_muscle}."

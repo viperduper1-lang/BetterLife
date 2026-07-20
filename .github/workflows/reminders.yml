@@ -1,0 +1,51 @@
+name: BetterLife reminders
+
+on:
+  # Verifică la fiecare 15 minute, în fereastra 03:00–20:59 UTC.
+  # Scriptul evaluează ora în Europe/Bucharest (se ajustează singur la
+  # ora de vară/iarnă), deci fereastra largă acoperă tot anul.
+  #
+  # Repo PUBLIC = minute nelimitate (recomandat, lasă așa).
+  # Repo PRIVAT = 2000 min/lună gratuit. Dacă vrei să economisești,
+  # îngustează la orele tale reale, ex: "*/15 4-19 * * *".
+  schedule:
+    - cron: "*/15 3-20 * * *"
+  # Buton „Run workflow" pentru test manual din tab-ul Actions.
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # ca să salveze state.json (evită notificări duble)
+
+concurrency:
+  group: betterlife-reminders
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Trimite reminderele scadente
+        env:
+          # Opțional: pune topicul ca secret (Settings → Secrets → Actions).
+          # Dacă secretul lipsește, se folosește topicul din config.yaml.
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python notify.py --send-due
+
+      - name: Salvează starea (deduplicare)
+        run: |
+          if [ -n "$(git status --porcelain state.json)" ]; then
+            git config user.name "betterlife-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state.json
+            git commit -m "state: $(date -u +%FT%TZ) [skip ci]"
+            git push || (git pull --rebase --autostash && git push)
+          fi

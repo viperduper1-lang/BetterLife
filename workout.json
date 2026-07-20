@@ -1,0 +1,28 @@
+{
+  "reminder_time": "19:45",
+  "title": "🏋️ Antrenament",
+  "treadmill_kcal_goal": 300,
+  "cardio": "🏃 Bandă 30 min (~300 kcal)",
+  "schedule": {
+    "monday": "Biceps",
+    "tuesday": "Triceps",
+    "wednesday": "Piept",
+    "thursday": "Spate",
+    "friday": "Picioare",
+    "saturday": "Umeri",
+    "sunday": "Repaus"
+  },
+  "details": {
+    "Piept": "gantere: 4x10 împins + 3x12 flotări",
+    "Spate": "gantere: 4x10 ramat + 3x12 pullover",
+    "Picioare": "genuflexiuni 4x12 + fandări 3x12",
+    "Umeri": "gantere: 4x12 împins + 3x15 ridicări laterale",
+    "Biceps": "gantere: 4x12 curl + 3x12 hammer",
+    "Triceps": "gantere: 4x12 extensii + 3x12 kickback",
+    "Abdomen": "crunch 4x20 + planșă 3x45s",
+    "Full body": "circuit total: 3 ture, 8 exerciții",
+    "Repaus": ""
+  },
+  "message": "Azi: {muscle}. {details}. Cardio: {cardio}. Goal bandă ~{treadmill_kcal} kcal.",
+  "rest_message": "Azi repaus pentru mușchi — dar cardio rămâne: {cardio}."
+}
