@@ -5,6 +5,7 @@
     "snack_am",
     "lunch",
     "workout",
-    "dinner"
+    "dinner",
+    "day_close"
   ]
 }
